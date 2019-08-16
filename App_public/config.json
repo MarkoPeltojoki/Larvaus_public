@@ -1,0 +1,13 @@
+{
+    "scoring_uri1" : "http://<Your Webservice key>.northeurope.azurecontainer.io/score",
+    "scoring_uri2" : "http://<Your Webservice key>.northeurope.azurecontainer.io/score",
+    "scoring_uri3" : "http://<Your Webservice key>.northeurope.azurecontainer.io/score",
+    "scoring_uri4" : "http://<Your Webservice key>.northeurope.azurecontainer.io/score",
+    "scoring_uri5" : "http://<Your Webservice key>.northeurope.azurecontainer.io/score",
+    "scoring_uri6" : "http://<Your Webservice key>.northeurope.azurecontainer.io/score",
+    "scoring_uri7" : "http://<Your Webservice key>.northeurope.azurecontainer.io/score",
+    "pic1" : "../larvaus.jpg",
+    "pic2" : "../larvaus_sleep.jpg",
+    "pic3" : "larvaus_lift.jpg",
+    "pic4" : "larvaus_butterfly.jpg"
+}
