@@ -15,28 +15,34 @@ with open('config.json') as f:
 def error_out():
     """Check the HTTP errors, return True/False"""
     # Get Scoring uri from config.json file, check for request error
+    # Checking only one to save time to avoid Azure web service probe timeout in 31s
     uri1 = config.get('scoring_uri1')
-    uri2 = config.get('scoring_uri2')
-    uri3 = config.get('scoring_uri3')
-    uri4 = config.get('scoring_uri4')
-    uri5 = config.get('scoring_uri5')
-    uri6 = config.get('scoring_uri6')
-    uri7 = config.get('scoring_uri7')
+    # uri2 = config.get('scoring_uri2')
+    # uri3 = config.get('scoring_uri3')
+    # uri4 = config.get('scoring_uri4')
+    # uri5 = config.get('scoring_uri5')
+    # uri6 = config.get('scoring_uri6')
+    # uri7 = config.get('scoring_uri7')
     try:
         requests.get(uri1)
-        requests.get(uri2)
-        requests.get(uri3)
-        requests.get(uri4)
-        requests.get(uri5)
-        requests.get(uri6)
-        requests.get(uri7)
+        # requests.get(uri2)
+        # requests.get(uri3)
+        # requests.get(uri4)
+        # requests.get(uri5)
+        # requests.get(uri6)
+        # requests.get(uri7)
     except requests.exceptions.RequestException:
         return True        
     return False
 
 def headers():
     """Header object for API requests"""
-    return {'Content-Type': 'application/json'}
+    # Added Connection and Keep-Alive while debugging Azure web service probe timeout, no affect on that one so may be ignored/removed
+    return {
+        'Content-Type': 'application/json',
+        'Connection': 'Keep-Alive',
+        'Keep-Alive': 'timeout=15, max=20'
+    }
 
 def get_week():
     """Input ISO Calendar week as ww"""
@@ -212,6 +218,119 @@ def index():
     picture = config.get('pic3')
     return render_template('index.html', pic=picture)
 
+# Due to Azure web service probe timeout in 31s split the results to each individual Primary per page
+@app.route("/larvaus1/", methods=['GET', 'POST'])
+def larvaus1():
+    """Return the results to be shown as webservice output"""
+    # If HTTP errors out, render error.html
+    picture = config.get('pic2')
+    if error_out() == True:
+        return render_template('error.html', pic=picture)
+    else:
+        # Render larvaus.html
+        picture = config.get('pic1')
+        return render_template('larvaus1.html',
+            pic=picture,
+            round=get_week() + " - " + get_year(),
+            data=primary1()        
+        )
+
+@app.route("/larvaus2/", methods=['GET', 'POST'])
+def larvaus2():
+    """Return the results to be shown as webservice output"""
+    # If HTTP errors out, render error.html
+    picture = config.get('pic2')
+    if error_out() == True:
+        return render_template('error.html', pic=picture)
+    else:
+        # Render larvaus.html
+        picture = config.get('pic1')
+        return render_template('larvaus2.html',
+            pic=picture,
+            round=get_week() + " - " + get_year(),
+            data=primary2()        
+        )
+
+@app.route("/larvaus3/", methods=['GET', 'POST'])
+def larvaus3():
+    """Return the results to be shown as webservice output"""
+    # If HTTP errors out, render error.html
+    picture = config.get('pic2')
+    if error_out() == True:
+        return render_template('error.html', pic=picture)
+    else:
+        # Render larvaus.html
+        picture = config.get('pic1')
+        return render_template('larvaus3.html',
+            pic=picture,
+            round=get_week() + " - " + get_year(),
+            data=primary3()        
+        )
+
+@app.route("/larvaus4/", methods=['GET', 'POST'])
+def larvaus4():
+    """Return the results to be shown as webservice output"""
+    # If HTTP errors out, render error.html
+    picture = config.get('pic2')
+    if error_out() == True:
+        return render_template('error.html', pic=picture)
+    else:
+        # Render larvaus.html
+        picture = config.get('pic1')
+        return render_template('larvaus4.html',
+            pic=picture,
+            round=get_week() + " - " + get_year(),
+            data=primary4()        
+        )
+
+@app.route("/larvaus5/", methods=['GET', 'POST'])
+def larvaus5():
+    """Return the results to be shown as webservice output"""
+    # If HTTP errors out, render error.html
+    picture = config.get('pic2')
+    if error_out() == True:
+        return render_template('error.html', pic=picture)
+    else:
+        # Render larvaus.html
+        picture = config.get('pic1')
+        return render_template('larvaus5.html',
+            pic=picture,
+            round=get_week() + " - " + get_year(),
+            data=primary5()        
+        )
+
+@app.route("/larvaus6/", methods=['GET', 'POST'])
+def larvaus6():
+    """Return the results to be shown as webservice output"""
+    # If HTTP errors out, render error.html
+    picture = config.get('pic2')
+    if error_out() == True:
+        return render_template('error.html', pic=picture)
+    else:
+        # Render larvaus.html
+        picture = config.get('pic1')
+        return render_template('larvaus6.html',
+            pic=picture,
+            round=get_week() + " - " + get_year(),
+            data=primary6()        
+        )
+
+@app.route("/larvaus7/", methods=['GET', 'POST'])
+def larvaus7():
+    """Return the results to be shown as webservice output"""
+    # If HTTP errors out, render error.html
+    picture = config.get('pic2')
+    if error_out() == True:
+        return render_template('error.html', pic=picture)
+    else:
+        # Render larvaus.html
+        picture = config.get('pic1')
+        return render_template('larvaus7.html',
+            pic=picture,
+            round=get_week() + " - " + get_year(),
+            data=primary7()        
+        )
+
 @app.route("/larvaus/", methods=['GET', 'POST'])
 def larvaus():
     """Return the results to be shown as webservice output"""
@@ -230,4 +349,4 @@ def larvaus():
 
 if __name__ == '__main__':
     app.debug = os.environ.get('FLASK_DEBUG', True)
-    app.run(port=6000)
+    app.run(port=7000)
