@@ -15,34 +15,17 @@ with open('config.json') as f:
 def error_out():
     """Check the HTTP errors, return True/False"""
     # Get Scoring uri from config.json file, check for request error
-    # Checking only one to save time to avoid Azure web service probe timeout in 31s
-    uri1 = config.get('scoring_uri1')
-    # uri2 = config.get('scoring_uri2')
-    # uri3 = config.get('scoring_uri3')
-    # uri4 = config.get('scoring_uri4')
-    # uri5 = config.get('scoring_uri5')
-    # uri6 = config.get('scoring_uri6')
-    # uri7 = config.get('scoring_uri7')
+    # Checking only one ML webservice container to save time to avoid Azure web service probe timeout in 31s, sometimes catches, most of times not
+    uri1 = config.get('scoring_uri1')      
     try:
-        requests.get(uri1)
-        # requests.get(uri2)
-        # requests.get(uri3)
-        # requests.get(uri4)
-        # requests.get(uri5)
-        # requests.get(uri6)
-        # requests.get(uri7)
+        requests.get(uri1)        
     except requests.exceptions.RequestException:
         return True        
     return False
 
 def headers():
-    """Header object for API requests"""
-    # Added Connection and Keep-Alive while debugging Azure web service probe timeout, no affect on that one so may be ignored/removed
-    return {
-        'Content-Type': 'application/json',
-        'Connection': 'Keep-Alive',
-        'Keep-Alive': 'timeout=15, max=20'
-    }
+    """Header object for API requests"""    
+    return {'Content-Type': 'application/json'}
 
 def get_week():
     """Input ISO Calendar week as ww"""
@@ -218,7 +201,7 @@ def index():
     picture = config.get('pic3')
     return render_template('index.html', pic=picture)
 
-# Due to Azure web service probe timeout in 31s split the results to each individual Primary per page
+# Due to Azure web service probe timeout in 31s if calling all the Primary results, splitting the Primary results to each individual page first
 @app.route("/larvaus1/", methods=['GET', 'POST'])
 def larvaus1():
     """Return the results to be shown as webservice output"""
