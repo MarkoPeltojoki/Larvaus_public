@@ -1,4 +1,5 @@
 {
+    "hostname" : "<Your Webservice key>.northeurope.azurecontainer.io",
     "scoring_uri1" : "http://<Your Webservice key>.northeurope.azurecontainer.io/score",
     "scoring_uri2" : "http://<Your Webservice key>.northeurope.azurecontainer.io/score",
     "scoring_uri3" : "http://<Your Webservice key>.northeurope.azurecontainer.io/score",

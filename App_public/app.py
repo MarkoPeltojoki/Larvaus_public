@@ -1,6 +1,7 @@
 import requests
 import json
 import os
+import subprocess, platform
 from urllib.parse import urlparse
 from datetime import date
 
@@ -12,7 +13,10 @@ app = Flask(__name__, static_folder='static', static_url_path='')
 with open('config.json') as f:
     config = json.load(f)
 
-def error_out():
+with open('results.json') as r:
+    result = json.load(r)
+
+def error_http():
     """Check the HTTP errors, return True/False"""
     # Get Scoring uri from config.json file, check for request error
     # Checking only one ML webservice container to save time to avoid Azure web service probe timeout in 31s, sometimes catches, most of times not
@@ -22,6 +26,20 @@ def error_out():
     except requests.exceptions.RequestException:
         return True        
     return False
+
+def error_ping():
+    """Check the connectivity with ping, return True/False"""
+    # Get Hostname from config.json file. Checking only one ML webservice container to save time. Number of pings, for Linux -c, for Windows -n.
+    hostname = config.get('hostname')
+    ping_str = "-n 1" if  platform.system().lower()=="windows" else "-c 1"
+    args = "ping " + " " + ping_str + " " + hostname
+    need_sh = False if  platform.system().lower()=="windows" else True
+    response = subprocess.call(args, shell=need_sh)
+    if response == 0:
+        return False
+    else:
+        return True
+
 
 def headers():
     """Header object for API requests"""    
@@ -196,10 +214,21 @@ def primary7():
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
-    """Return the index.html"""
-    # Start with index.html to introduce Larvaus
-    picture = config.get('pic3')
-    return render_template('index.html', pic=picture)
+    """Return the index.html or error.html"""
+    # If ping error, render error.html
+    picture = config.get('pic2')
+    rnd = get_week() + " - " + get_year()
+    results = result.get(rnd)
+    if error_ping() == True:
+        return render_template('error.html', 
+        pic=picture, 
+        round=rnd,
+        data=results
+        )
+    else:
+        # Render index.html to introduce Larvaus
+        picture = config.get('pic3')
+        return render_template('index.html', pic=picture)
 
 # Due to Azure web service probe timeout in 31s if calling all the Primary results, splitting the Primary results to each individual page first
 @app.route("/larvaus1/", methods=['GET', 'POST'])
@@ -207,14 +236,20 @@ def larvaus1():
     """Return the results to be shown as webservice output"""
     # If HTTP errors out, render error.html
     picture = config.get('pic2')
-    if error_out() == True:
-        return render_template('error.html', pic=picture)
+    rnd = get_week() + " - " + get_year()
+    results = result.get(rnd)    
+    if error_http() == True:
+        return render_template('error.html', 
+        pic=picture, 
+        round=rnd,
+        data=results
+        )
     else:
         # Render larvaus.html
         picture = config.get('pic1')
         return render_template('larvaus1.html',
             pic=picture,
-            round=get_week() + " - " + get_year(),
+            round=rnd,
             data=primary1()        
         )
 
@@ -223,14 +258,20 @@ def larvaus2():
     """Return the results to be shown as webservice output"""
     # If HTTP errors out, render error.html
     picture = config.get('pic2')
-    if error_out() == True:
-        return render_template('error.html', pic=picture)
+    rnd = get_week() + " - " + get_year()
+    results = result.get(rnd)    
+    if error_http() == True:
+        return render_template('error.html', 
+        pic=picture, 
+        round=rnd,
+        data=results
+        )
     else:
         # Render larvaus.html
         picture = config.get('pic1')
         return render_template('larvaus2.html',
             pic=picture,
-            round=get_week() + " - " + get_year(),
+            round=rnd,
             data=primary2()        
         )
 
@@ -239,14 +280,20 @@ def larvaus3():
     """Return the results to be shown as webservice output"""
     # If HTTP errors out, render error.html
     picture = config.get('pic2')
-    if error_out() == True:
-        return render_template('error.html', pic=picture)
+    rnd = get_week() + " - " + get_year()
+    results = result.get(rnd)    
+    if error_http() == True:
+        return render_template('error.html', 
+        pic=picture, 
+        round=rnd,
+        data=results
+        )
     else:
         # Render larvaus.html
         picture = config.get('pic1')
         return render_template('larvaus3.html',
             pic=picture,
-            round=get_week() + " - " + get_year(),
+            round=rnd,
             data=primary3()        
         )
 
@@ -255,14 +302,20 @@ def larvaus4():
     """Return the results to be shown as webservice output"""
     # If HTTP errors out, render error.html
     picture = config.get('pic2')
-    if error_out() == True:
-        return render_template('error.html', pic=picture)
+    rnd = get_week() + " - " + get_year()
+    results = result.get(rnd)    
+    if error_http() == True:
+        return render_template('error.html', 
+        pic=picture, 
+        round=rnd,
+        data=results
+        )
     else:
         # Render larvaus.html
         picture = config.get('pic1')
         return render_template('larvaus4.html',
             pic=picture,
-            round=get_week() + " - " + get_year(),
+            round=rnd,
             data=primary4()        
         )
 
@@ -271,14 +324,20 @@ def larvaus5():
     """Return the results to be shown as webservice output"""
     # If HTTP errors out, render error.html
     picture = config.get('pic2')
-    if error_out() == True:
-        return render_template('error.html', pic=picture)
+    rnd = get_week() + " - " + get_year()
+    results = result.get(rnd)    
+    if error_http() == True:
+        return render_template('error.html', 
+        pic=picture, 
+        round=rnd,
+        data=results
+        )
     else:
         # Render larvaus.html
         picture = config.get('pic1')
         return render_template('larvaus5.html',
             pic=picture,
-            round=get_week() + " - " + get_year(),
+            round=rnd,
             data=primary5()        
         )
 
@@ -287,14 +346,20 @@ def larvaus6():
     """Return the results to be shown as webservice output"""
     # If HTTP errors out, render error.html
     picture = config.get('pic2')
-    if error_out() == True:
-        return render_template('error.html', pic=picture)
+    rnd = get_week() + " - " + get_year()
+    results = result.get(rnd)    
+    if error_http() == True:
+        return render_template('error.html', 
+        pic=picture, 
+        round=rnd,
+        data=results
+        )
     else:
         # Render larvaus.html
         picture = config.get('pic1')
         return render_template('larvaus6.html',
             pic=picture,
-            round=get_week() + " - " + get_year(),
+            round=rnd,
             data=primary6()        
         )
 
@@ -303,14 +368,20 @@ def larvaus7():
     """Return the results to be shown as webservice output"""
     # If HTTP errors out, render error.html
     picture = config.get('pic2')
-    if error_out() == True:
-        return render_template('error.html', pic=picture)
+    rnd = get_week() + " - " + get_year()
+    results = result.get(rnd)    
+    if error_http() == True:
+        return render_template('error.html', 
+        pic=picture, 
+        round=rnd,
+        data=results
+        )
     else:
         # Render larvaus.html
         picture = config.get('pic1')
         return render_template('larvaus7.html',
             pic=picture,
-            round=get_week() + " - " + get_year(),
+            round=rnd,
             data=primary7()        
         )
 
@@ -319,15 +390,23 @@ def larvaus():
     """Return the results to be shown as webservice output"""
     # If HTTP errors out, render error.html
     picture = config.get('pic2')
-    if error_out() == True:
-        return render_template('error.html', pic=picture)
+    rnd = get_week() + " - " + get_year()
+    results = result.get(rnd)    
+    if error_http() == True:
+        return render_template('error.html', 
+        pic=picture, 
+        round=rnd,
+        data=results
+        )
     else:
         # Render larvaus.html
         picture = config.get('pic1')
+        rnd = get_week() + " - " + get_year()
+        results = primary1() + " - " + primary2() + " - " + primary3() + " - " +primary4() + " - " + primary5() + " - " + primary6() + " - " + primary7()
         return render_template('larvaus.html',
             pic=picture,
-            round=get_week() + " - " + get_year(),
-            data=primary1() + " - " + primary2() + " - " + primary3() + " - " +primary4() + " - " + primary5() + " - " + primary6() + " - " + primary7()        
+            round=rnd,
+            data=results        
         )
 
 if __name__ == '__main__':
